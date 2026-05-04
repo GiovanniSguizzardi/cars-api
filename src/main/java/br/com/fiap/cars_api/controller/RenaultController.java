@@ -1,7 +1,7 @@
 package br.com.fiap.cars_api.controller;
 
-import br.com.fiap.cars_api.model.Honda;
-import br.com.fiap.cars_api.repository.HondaRepository;
+import br.com.fiap.cars_api.model.Renault;
+import br.com.fiap.cars_api.repository.RenaultRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,19 +17,19 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("api/${api.version}/honda")
-public class HondaController {
+@RequestMapping("api/${api.version}/renault")
+public class RenaultController {
 
     @Autowired
-    private HondaRepository repository;
+    private RenaultRepository repository;
 
     @PostMapping
-    public ResponseEntity<Honda> create(@RequestBody Honda honda) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(honda));
+    public ResponseEntity<Renault> create(@RequestBody Renault renault) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(renault));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Honda> findById(@PathVariable Long id) {
+    public ResponseEntity<Renault> findById(@PathVariable Long id) {
         return repository
                 .findById(id)
                 .map(ResponseEntity::ok)
@@ -37,20 +37,20 @@ public class HondaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Honda>> findAll() {
+    public ResponseEntity<List<Renault>> findAll() {
         return ResponseEntity.ok(repository.findAll());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Honda> update(@PathVariable Long id,
-                                          @RequestBody Honda honda) {
+    public ResponseEntity<Renault> update(@PathVariable Long id,
+                                        @RequestBody Renault renault) {
 
-        Optional<Honda> optHonda = repository.findById(id);
+        Optional<Renault> optRenault = repository.findById(id);
 
-        if (optHonda.isPresent()) {
-            honda.setId(id);
-            Honda marcaHondaAlterada = repository.save(honda);
-            return ResponseEntity.ok(marcaHondaAlterada);
+        if (optRenault.isPresent()) {
+            renault.setId(id);
+            Renault marcaRenaultAlterada = repository.save(renault);
+            return ResponseEntity.ok(marcaRenaultAlterada);
         } else {
             return ResponseEntity.notFound().build();
         }

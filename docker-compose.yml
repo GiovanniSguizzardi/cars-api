@@ -1,0 +1,14 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: cars-api-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_pwd
+      MYSQL_DATABASE: api
+    ports:
+      - "3306:3306"
+    volumes:
+      - cars_mysql_data:/var/lib/mysql
+
+volumes:
+  cars_mysql_data:
