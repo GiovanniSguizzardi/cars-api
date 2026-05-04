@@ -36,16 +36,16 @@ Acesse a documentação em: `http://localhost:8080/`
 
 ## Rotas
 
-- `GET /api/v1/honda`           — lista todos
-- `GET /api/v1/honda/{id}`      — busca por id
-- `POST /api/v1/honda`          — cria novo
-- `PUT /api/v1/honda/{id}`      — atualiza
-- `DELETE /api/v1/honda/{id}`   — deleta
+- `GET /api/v1/honda`           - lista todos
+- `GET /api/v1/honda/{id}`      - busca por id
+- `POST /api/v1/honda`          - cria novo
+- `PUT /api/v1/honda/{id}`      - atualiza
+- `DELETE /api/v1/honda/{id}`   - deleta
 
 ---
 
-- `GET /api/v1/renault`         — lista todos
-- `GET /api/v1/renault/{id}`    — busca por id
-- `POST /api/v1/renault`        — cria novo
-- `PUT /api/v1/renault/{id}`    — atualiza
-- `DELETE /api/v1/renault/{id}` — deleta
+- `GET /api/v1/renault`         - lista todos
+- `GET /api/v1/renault/{id}`    - busca por id
+- `POST /api/v1/renault`        - cria novo
+- `PUT /api/v1/renault/{id}`    - atualiza
+- `DELETE /api/v1/renault/{id}` - deleta
