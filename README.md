@@ -10,8 +10,6 @@ e empacotamento/execução via **Docker**.
 | Docker Hub | https://hub.docker.com/r/ogibas/cars-api |
 | Imagem | `ogibas/cars-api:latest` |
 
----
-
 ## Sumário
 
 1. [Stack](#stack)
@@ -25,8 +23,6 @@ e empacotamento/execução via **Docker**.
 9. [Build da imagem a partir do código-fonte](#build-da-imagem-a-partir-do-código-fonte)
 10. [Estrutura do projeto](#estrutura-do-projeto)
 
----
-
 ## Stack
 
 - Java 17
@@ -35,8 +31,6 @@ e empacotamento/execução via **Docker**.
 - springdoc-openapi (Swagger UI)
 - Maven
 - Docker / Docker Hub
-
----
 
 ## Executando a partir da imagem do Docker Hub
 
@@ -130,8 +124,6 @@ docker rm -f cars-api-app cars-api-mysql
 docker network rm cars-net
 ```
 
----
-
 ## Variáveis de ambiente
 
 | Variável | Obrigatória | Padrão na imagem | Descrição |
@@ -145,8 +137,6 @@ docker network rm cars-net
 > No profile `default` a conexão é fixa (`jdbc:mysql://localhost:3306/api`) e as três
 > variáveis `DB_*` são ignoradas — esse profile é destinado ao desenvolvimento local.
 
----
-
 ## Swagger / OpenAPI
 
 Com a aplicação em execução:
@@ -157,8 +147,6 @@ Com a aplicação em execução:
 | Especificação OpenAPI (JSON) | <http://localhost:8080/v3/api-docs> |
 
 O Swagger fica disponível nos dois profiles (`default` e `prd`).
-
----
 
 ## Profiles
 
@@ -196,8 +184,6 @@ Execução:
 ```bash
 java -jar target/app.jar --spring.profiles.active=prd
 ```
-
----
 
 ## Rotas da API
 
@@ -249,8 +235,6 @@ curl -X POST http://localhost:8080/api/v1/honda \
 
 > O campo `id` é gerado automaticamente pelo banco e não deve ser enviado no `POST`.
 
----
-
 ## Executando com docker compose
 
 Forma mais rápida de subir tudo (MySQL + API, já no profile `prd`):
@@ -268,8 +252,6 @@ Para derrubar tudo (incluindo o volume do banco):
 docker compose down -v
 ```
 
----
-
 ## Executando localmente sem Docker
 
 Pré-requisitos: JDK 17+ e um MySQL na porta 3306.
@@ -283,8 +265,6 @@ docker run -d --name cars-api-mysql \
 # 2. Aplicação (profile default - cria as tabelas sozinho)
 ./mvnw spring-boot:run
 ```
-
----
 
 ## Build da imagem a partir do código-fonte
 
@@ -300,8 +280,6 @@ docker build -t ogibas/cars-api:latest .
 docker login
 docker push ogibas/cars-api:latest
 ```
-
----
 
 ## Estrutura do projeto
 
