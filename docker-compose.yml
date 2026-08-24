@@ -9,6 +9,28 @@ services:
       - "3306:3306"
     volumes:
       - cars_mysql_data:/var/lib/mysql
+      # Cria o schema no proprio MySQL (a aplicacao nao cria nada no profile prd)
+      - ./db/init-prd.sql:/docker-entrypoint-initdb.d/init-prd.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot_pwd"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  app:
+    image: cars-api:latest
+    build: .
+    container_name: cars-api-app
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prd
+      DB_URL: jdbc:mysql://mysql:3306/api
+      DB_USERNAME: root
+      DB_PASSWORD: root_pwd
+    ports:
+      - "8080:8080"
 
 volumes:
   cars_mysql_data:
