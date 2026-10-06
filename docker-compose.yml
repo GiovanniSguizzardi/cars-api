@@ -1,36 +1,50 @@
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: cars-api-mysql
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: cars-api-sqlserver
     environment:
-      MYSQL_ROOT_PASSWORD: root_pwd
-      MYSQL_DATABASE: api
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "1q2w3e4R@"
+      MSSQL_PID: Developer
     ports:
-      - "3306:3306"
+      - "1433:1433"
     volumes:
-      - cars_mysql_data:/var/lib/mysql
-      # Cria o schema no proprio MySQL (a aplicacao nao cria nada no profile prd)
-      - ./db/init-prd.sql:/docker-entrypoint-initdb.d/init-prd.sql:ro
+      - cars_sqlserver_data:/var/opt/mssql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot_pwd"]
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$${MSSQL_SA_PASSWORD}\" -C -Q \"SELECT 1\" || exit 1"]
       interval: 10s
       timeout: 5s
-      retries: 10
+      retries: 15
+      start_period: 20s
+
+  # A imagem do SQL Server nao executa scripts de inicializacao sozinha.
+  # Este servico roda uma unica vez e cria o schema com o db/init-prd.sql
+  # (a aplicacao nao cria nada no profile prd).
+  db-init:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: cars-api-db-init
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    volumes:
+      - ./db/init-prd.sql:/init-prd.sql:ro
+    entrypoint: ["/opt/mssql-tools18/bin/sqlcmd", "-S", "sqlserver", "-U", "sa", "-P", "1q2w3e4R@", "-C", "-b", "-i", "/init-prd.sql"]
+    restart: "no"
 
   app:
     image: cars-api:latest
     build: .
     container_name: cars-api-app
     depends_on:
-      mysql:
-        condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
     environment:
       SPRING_PROFILES_ACTIVE: prd
-      DB_URL: jdbc:mysql://mysql:3306/api
-      DB_USERNAME: root
-      DB_PASSWORD: root_pwd
+      DB_URL: jdbc:sqlserver://sqlserver:1433;databaseName=api;encrypt=false;trustServerCertificate=true
+      DB_USERNAME: sa
+      DB_PASSWORD: "1q2w3e4R@"
     ports:
       - "8080:8080"
 
 volumes:
-  cars_mysql_data:
+  cars_sqlserver_data:

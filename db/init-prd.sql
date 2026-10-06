@@ -1,44 +1,50 @@
 -- ===========================================================================
--- Script de criacao do schema para o profile prd.
+-- Script de criacao do schema (SQL Server / T-SQL) para o profile prd.
 --
 -- No profile prd a aplicacao NAO cria o banco nem as tabelas
--- (ddl-auto=none). Este script deve ser executado UMA VEZ no MySQL
--- antes de subir o container da aplicacao.
+-- (ddl-auto=none). Este script deve ser executado UMA VEZ no SQL Server
+-- antes de subir a aplicacao. Ele e idempotente (pode ser reexecutado).
 --
---   docker exec -i cars-api-mysql mysql -uroot -proot_pwd < db/init-prd.sql
+--   sqlcmd -S localhost -U sa -P "1q2w3e4R@" -C -i db/init-prd.sql
 -- ===========================================================================
 
-CREATE DATABASE IF NOT EXISTS api
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
+IF DB_ID('api') IS NULL
+    CREATE DATABASE api;
+GO
 
 USE api;
+GO
 
-CREATE TABLE IF NOT EXISTS honda (
-    id                  BIGINT       NOT NULL AUTO_INCREMENT,
-    modelo_carros       VARCHAR(100) NOT NULL,
-    ano_carros          VARCHAR(100) NOT NULL,
-    potencia_carros     VARCHAR(100) NOT NULL,
-    cor_carros          VARCHAR(100) NOT NULL,
-    nome_ex_dono_carros VARCHAR(100) NULL,
-    PRIMARY KEY (id)
-) ENGINE = InnoDB;
+IF OBJECT_ID('dbo.honda', 'U') IS NULL
+    CREATE TABLE dbo.honda (
+        id                  BIGINT       IDENTITY(1,1) NOT NULL,
+        modelo_carros       VARCHAR(100) NOT NULL,
+        ano_carros          VARCHAR(100) NOT NULL,
+        potencia_carros     VARCHAR(100) NOT NULL,
+        cor_carros          VARCHAR(100) NOT NULL,
+        nome_ex_dono_carros VARCHAR(100) NULL,
+        CONSTRAINT pk_honda PRIMARY KEY (id)
+    );
+GO
 
-CREATE TABLE IF NOT EXISTS renault (
-    id                  BIGINT       NOT NULL AUTO_INCREMENT,
-    modelo_carros       VARCHAR(100) NOT NULL,
-    ano_carros          VARCHAR(100) NOT NULL,
-    potencia_carros     VARCHAR(100) NOT NULL,
-    cor_carros          VARCHAR(100) NOT NULL,
-    nome_ex_dono_carros VARCHAR(100) NULL,
-    PRIMARY KEY (id)
-) ENGINE = InnoDB;
+IF OBJECT_ID('dbo.renault', 'U') IS NULL
+    CREATE TABLE dbo.renault (
+        id                  BIGINT       IDENTITY(1,1) NOT NULL,
+        modelo_carros       VARCHAR(100) NOT NULL,
+        ano_carros          VARCHAR(100) NOT NULL,
+        potencia_carros     VARCHAR(100) NOT NULL,
+        cor_carros          VARCHAR(100) NOT NULL,
+        nome_ex_dono_carros VARCHAR(100) NULL,
+        CONSTRAINT pk_renault PRIMARY KEY (id)
+    );
+GO
 
 -- Dados de exemplo (opcional)
-INSERT INTO honda (modelo_carros, ano_carros, potencia_carros, cor_carros, nome_ex_dono_carros)
-SELECT 'Civic Type R', '2024', '320CV', 'Branco', NULL
-WHERE NOT EXISTS (SELECT 1 FROM honda);
+IF NOT EXISTS (SELECT 1 FROM dbo.honda)
+    INSERT INTO dbo.honda (modelo_carros, ano_carros, potencia_carros, cor_carros, nome_ex_dono_carros)
+    VALUES ('Civic Type R', '2024', '320CV', 'Branco', NULL);
 
-INSERT INTO renault (modelo_carros, ano_carros, potencia_carros, cor_carros, nome_ex_dono_carros)
-SELECT 'Megane RS', '2022', '300CV', 'Amarelo', NULL
-WHERE NOT EXISTS (SELECT 1 FROM renault);
+IF NOT EXISTS (SELECT 1 FROM dbo.renault)
+    INSERT INTO dbo.renault (modelo_carros, ano_carros, potencia_carros, cor_carros, nome_ex_dono_carros)
+    VALUES ('Megane RS', '2022', '300CV', 'Amarelo', NULL);
+GO
